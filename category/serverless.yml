@@ -1,0 +1,80 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: nimat
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: category
+
+provider:
+  name: aws
+  runtime: nodejs24.x
+  environment:
+    BUCKET_NAME: category-nimat-images
+    DYNAMODB_TABLE: Categories
+    SNS_TOPIC_ARN: arn:aws:sns:us-east-1:720180693865:CategoryCleanupTopic_nimat
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+      Resource:
+        - "arn:aws:s3:::category-nimat-images/*"
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:Scan"
+        - "dynamodb:DeleteItem"
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:720180693865:table/Categories"
+    - Effect: "Allow"
+      Action:
+        - "sns:Publish"
+      Resource:
+        - arn:aws:sns:us-east-1:720180693865:CategoryCleanupTopic_nimat
+
+resources:
+  Resources:
+    CategoryImagesBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: category-nimat-images
+    CategoryTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Categories
+        AttributeDefinitions:
+          - AttributeName: fileName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: fileName
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    CategoryCleanupTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: CategoryCleanupTopic_nimat
+    CategoryCleanupTopicSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: arn:aws:sns:us-east-1:720180693865:CategoryCleanupTopic_nimat
+        Protocol: email
+        Endpoint: nimatullah.razmjo@gmail.com
+
+functions:
+  getUploadUrl:
+    handler: handlers/getUploadCategory.getUploadUrl
+    events:
+      - httpApi:
+          path: /upload-url
+          method: post
+  updateCategoryImage:
+    handler: handlers/updateCategoryImage.updateCategoryImage
+    events:
+      - s3:
+          bucket: category-nimat-images
+          event: s3:ObjectCreated:Put
+          existing: true
+  cleanuCategories:
+    handler: handlers/cleanCategory.cleanCategory
+    events:
+      - schedule:
+          rate: rate(2 minutes)
+          enabled: true
