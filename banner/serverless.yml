@@ -1,0 +1,56 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: nimat
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: banner
+
+provider:
+  name: aws
+  runtime: nodejs24.x
+  region: us-east-1
+  environment:
+    BUCKET_NAME: banner-nimat-images-ads
+    DYNAMODB_TABLE: Banners
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+      Resource:
+        - "arn:aws:s3:::banner-nimat-images-ads/*"
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:*:table/Banners"
+        - "arn:aws:dynamodb:us-east-1:720180693865:table/Banners"
+resources:
+  Resources:
+    BannerImagesBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: banner-nimat-images-ads
+    BannersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Banners
+        AttributeDefinitions:
+          - AttributeName: fileName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: fileName
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+functions:
+  uploadBanner:
+    handler: handlers/uploadBanner.getUploadUrl
+    events:
+      - httpApi:
+          path: /upload-banner
+          method: post
+  confirmUpload:
+    handler: handlers/confirmUpload.confirmUpload
+    events:
+      - s3:
+          bucket: banner-nimat-images-ads
+          event: s3:ObjectCreated:Put
+          existing: true

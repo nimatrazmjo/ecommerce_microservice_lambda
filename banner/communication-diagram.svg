@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="600" viewBox="0 0 1100 600" role="img" aria-label="AWS Lambda communication diagram for the e-commerce microservices">
+  <style>
+    .label {
+      font-family: "Helvetica", "Arial", sans-serif;
+      font-size: 16px;
+      fill: #0b1f2a;
+      text-anchor: middle;
+    }
+    .small-label {
+      font-family: "Helvetica", "Arial", sans-serif;
+      font-size: 14px;
+      fill: #0b1f2a;
+      text-anchor: middle;
+    }
+    .section-title {
+      font-family: "Helvetica", "Arial", sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      fill: #111827;
+      text-anchor: start;
+    }
+    .box {
+      fill: #e5f0f9;
+      stroke: #5a7688;
+      stroke-width: 2;
+      rx: 10;
+      ry: 10;
+    }
+    .api-gateway {
+      fill: #fcbfdb;
+      stroke: #c22564;
+      stroke-width: 2;
+    }
+    .lambda {
+      fill: #ff9900;
+      stroke: #995700;
+      stroke-width: 2;
+    }
+    .cognito {
+      fill: #ed4b83;
+      stroke: #8c1b4d;
+      stroke-width: 2;
+    }
+    .dynamodb {
+      fill: #1b71c1;
+      stroke: #0c3b75;
+      stroke-width: 2;
+    }
+    .s3 {
+      fill: #2e7d32;
+      stroke: #144d1f;
+      stroke-width: 2;
+    }
+    .arrow {
+      stroke: #374151;
+      stroke-width: 3;
+      marker-end: url(#arrowhead);
+      fill: none;
+    }
+    .arrow-label {
+      font-family: "Helvetica", "Arial", sans-serif;
+      font-size: 14px;
+      fill: #374151;
+      text-anchor: middle;
+    }
+  </style>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" fill="#374151">
+      <polygon points="0 0, 10 4, 0 8"></polygon>
+    </marker>
+  </defs>
+
+  <!-- Section titles -->
+  <text x="30" y="30" class="section-title">Auth service flow</text>
+  <text x="30" y="320" class="section-title">Banner service flow</text>
+
+  <!-- Client box -->
+  <rect x="40" y="60" width="150" height="80" class="box"></rect>
+  <text x="115" y="95" class="label">Client apps</text>
+  <text x="115" y="120" class="small-label">Web | Mobile</text>
+
+  <!-- API Gateway -->
+  <polygon points="270,60 330,60 360,100 330,140 270,140 240,100" class="api-gateway"></polygon>
+  <text x="300" y="100" class="label">API</text>
+  <text x="300" y="125" class="small-label">Gateway</text>
+
+  <!-- Auth Lambda -->
+  <polygon points="500,60 560,60 590,100 560,140 500,140 470,100" class="lambda"></polygon>
+  <text x="530" y="95" class="label">Auth</text>
+  <text x="530" y="120" class="small-label">signup /</text>
+  <text x="530" y="140" class="small-label">confirm / login / signout</text>
+
+  <!-- Cognito -->
+  <rect x="670" y="40" width="170" height="90" class="cognito" rx="15" ry="15"></rect>
+  <text x="755" y="85" class="label">Amazon Cognito</text>
+
+  <!-- Users DynamoDB -->
+  <rect x="670" y="150" width="170" height="90" class="dynamodb" rx="15" ry="15"></rect>
+  <text x="755" y="195" class="label">DynamoDB</text>
+  <text x="755" y="220" class="small-label">Users table</text>
+
+  <!-- Banner Client -->
+  <rect x="40" y="360" width="150" height="80" class="box"></rect>
+  <text x="115" y="395" class="label">Content ops</text>
+  <text x="115" y="420" class="small-label">Admin UI</text>
+
+  <!-- Banner API Gateway -->
+  <polygon points="270,360 330,360 360,400 330,440 270,440 240,400" class="api-gateway"></polygon>
+  <text x="300" y="400" class="label">API</text>
+  <text x="300" y="425" class="small-label">Gateway</text>
+
+  <!-- uploadBanner Lambda -->
+  <polygon points="500,360 560,360 590,400 560,440 500,440 470,400" class="lambda"></polygon>
+  <text x="530" y="395" class="label">Lambda</text>
+  <text x="530" y="420" class="small-label">uploadBanner</text>
+
+  <!-- S3 bucket -->
+  <rect x="690" y="330" width="140" height="110" class="s3" rx="20" ry="20"></rect>
+  <text x="760" y="375" class="label">Amazon S3</text>
+  <text x="760" y="400" class="small-label">banner uploads</text>
+
+  <!-- confirmUpload Lambda -->
+  <polygon points="500,480 560,480 590,520 560,560 500,560 470,520" class="lambda"></polygon>
+  <text x="530" y="515" class="label">Lambda</text>
+  <text x="530" y="540" class="small-label">confirmUpload</text>
+
+  <!-- Banners table -->
+  <rect x="690" y="470" width="140" height="110" class="dynamodb" rx="15" ry="15"></rect>
+  <text x="760" y="515" class="label">DynamoDB</text>
+  <text x="760" y="540" class="small-label">Banners table</text>
+
+  <!-- Shared outputs -->
+  <rect x="880" y="60" width="180" height="90" class="box"></rect>
+  <text x="970" y="95" class="label">JWT tokens</text>
+  <text x="970" y="120" class="small-label">+ profile record</text>
+
+  <rect x="880" y="360" width="180" height="90" class="box"></rect>
+  <text x="970" y="395" class="label">Public CDN</text>
+  <text x="970" y="420" class="small-label">Signed URLs</text>
+
+  <!-- Arrows Top flow -->
+  <line x1="190" y1="100" x2="240" y2="100" class="arrow"></line>
+  <text x="215" y="85" class="arrow-label">HTTPS</text>
+
+  <line x1="360" y1="100" x2="470" y2="100" class="arrow"></line>
+  <text x="415" y="85" class="arrow-label">/sign-*</text>
+
+  <line x1="590" y1="90" x2="670" y2="90" class="arrow"></line>
+  <text x="630" y="75" class="arrow-label">Cognito API</text>
+
+  <line x1="590" y1="130" x2="670" y2="190" class="arrow"></line>
+  <text x="630" y="170" class="arrow-label">PutItem</text>
+
+  <line x1="840" y1="85" x2="880" y2="85" class="arrow"></line>
+  <text x="860" y="70" class="arrow-label">tokens</text>
+
+  <!-- Banner arrows -->
+  <line x1="190" y1="400" x2="240" y2="400" class="arrow"></line>
+  <text x="215" y="385" class="arrow-label">HTTPS</text>
+
+  <line x1="360" y1="400" x2="470" y2="400" class="arrow"></line>
+  <text x="415" y="385" class="arrow-label">/upload-banner</text>
+
+  <line x1="590" y1="395" x2="690" y2="395" class="arrow"></line>
+  <text x="640" y="375" class="arrow-label">Signed URL</text>
+
+  <line x1="760" y1="440" x2="760" y2="470" class="arrow"></line>
+  <text x="790" y="455" class="arrow-label">S3 event</text>
+
+  <line x1="590" y1="520" x2="690" y2="520" class="arrow"></line>
+  <text x="640" y="505" class="arrow-label">metadata</text>
+
+  <line x1="840" y1="395" x2="880" y2="395" class="arrow"></line>
+  <text x="860" y="380" class="arrow-label">publish</text>
+
+  <line x1="830" y1="520" x2="880" y2="520" class="arrow"></line>
+  <text x="855" y="505" class="arrow-label">listings</text>
+</svg>
