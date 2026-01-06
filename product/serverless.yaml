@@ -86,3 +86,9 @@ functions:
       - schedule:
           rate: rate(1 minute)
           enabled: true
+  getApprovedProducts:
+    handler: handlers/getApprovedProducts.getApprovedProducts
+    events:
+      - httpApi:
+          path: /approved-products
+          method: get

@@ -78,3 +78,9 @@ functions:
       - schedule:
           rate: rate(2 minutes)
           enabled: true
+  getAllCategories:
+    handler: handlers/getAllCategories.getAllCategories
+    events:
+      - httpApi:
+          path: /categories
+          method: get
