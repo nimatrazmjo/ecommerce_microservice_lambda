@@ -1,0 +1,40 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: nimat
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: order
+
+provider:
+  name: aws
+  runtime: nodejs24.x
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - arn:aws:dynamodb:us-east-1:*:table/Orders
+  environment:
+    ORDERS_TABLE: Orders
+  # Uncomment to easily set up a custom domain. Read the docs for more details:
+  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
+  # domain: api.example.com
+
+resources:
+  Resources:
+    OrdersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Orders
+        AttributeDefinitions:
+          - AttributeName: orderId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: orderId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+functions:
+  placeOrder:
+    handler: handlers/placeOrder.placeOrder
+    events:
+      - httpApi:
+          path: /place-order
+          method: post

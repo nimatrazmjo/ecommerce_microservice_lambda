@@ -16,7 +16,8 @@ provider:
   environment:
     BUCKET_NAME: product-nimat-images
     DYNAMODB_TABLE: Products
-    SNS_TOPIC_ARN: arn:aws:sns:us-east-1:720180693865:ProductCleanupTopic
+    SNS_TOPIC_ARN:
+      Ref: ProductCleanupTopic
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -35,7 +36,7 @@ provider:
       Action:
         - "sns:Publish"
       Resource:
-        - "arn:aws:sns:us-east-1:720180693865:ProductCleanupTopic"
+        - Ref: ProductCleanupTopic
 resources:
   Resources:
     ProductImagesBucket:
@@ -60,7 +61,8 @@ resources:
     ProductCleanupTopicSubscription:
       Type: AWS::SNS::Subscription
       Properties:
-        TopicArn: arn:aws:sns:us-east-1:720180693865:ProductCleanupTopic
+        TopicArn:
+          Ref: ProductCleanupTopic
         Protocol: email
         Endpoint: ni.razmjo@gmail.com
 
@@ -79,7 +81,6 @@ functions:
       - s3:
           bucket: product-nimat-images
           event: s3:ObjectCreated:Put
-          existing: true
   cleanupProduct:
     handler: handlers/cleanupProduct.cleanupProduct
     events:
