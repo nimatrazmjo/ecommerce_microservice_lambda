@@ -13,9 +13,11 @@ provider:
         - sqs:SendMessage
         - sqs:ReceiveMessage
         - sqs:DeleteMessage
+        - ses:SendEmail
       Resource:
         - fn::GetAtt: [OrdersTable, Arn]
         - fn::GetAtt: [OrderQueue, Arn]
+        - arn:aws:ses:us-east-1:* # do not use this in production, restrict to your identity
   environment:
     ORDERS_TABLE: Orders
     ORDER_QUEUE_URL:
@@ -41,6 +43,10 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: OrderQueue
+    OrderServiceEmailIdentity:
+      Type: AWS::SES::EmailIdentity
+      Properties:
+        EmailIdentity: "nimatullah.razmjo@gmail.com"
 functions:
   placeOrder:
     handler: handlers/placeOrder.placeOrder

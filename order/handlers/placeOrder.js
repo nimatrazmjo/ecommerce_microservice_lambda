@@ -4,6 +4,8 @@ const crypto = require("crypto");
 const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
 const { SQSClient, SendMessageCommand } = require("@aws-sdk/client-sqs");
 
+const { sendEmail } = require("../services/sendEmail");
+
 const dynamoDbClient = new DynamoDBClient({ region: "us-east-1" });
 const sqsClient = new SQSClient({ region: "us-east-1" });
 
@@ -60,6 +62,8 @@ exports.placeOrder = async (event) => {
     const sqsCommand = new SendMessageCommand(sqsParams);
     await sqsClient.send(sqsCommand);
 
+    // Send order confirmation email
+    await sendEmail(email, orderId, product.productName?.S);
     return {
       statusCode: 201,
       body: JSON.stringify({ message: "Order placed successfully", orderId }),
