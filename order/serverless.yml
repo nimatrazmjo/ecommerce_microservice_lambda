@@ -10,10 +10,16 @@ provider:
     - Effect: "Allow"
       Action:
         - dynamodb:PutItem
+        - sqs:SendMessage
+        - sqs:ReceiveMessage
+        - sqs:DeleteMessage
       Resource:
-        - arn:aws:dynamodb:us-east-1:*:table/Orders
+        - fn::GetAtt: [OrdersTable, Arn]
+        - fn::GetAtt: [OrderQueue, Arn]
   environment:
     ORDERS_TABLE: Orders
+    ORDER_QUEUE_URL:
+      Ref: OrderQueue
   # Uncomment to easily set up a custom domain. Read the docs for more details:
   # https://www.serverless.com/framework/docs/providers/aws/guide/domains
   # domain: api.example.com
@@ -31,6 +37,10 @@ resources:
           - AttributeName: orderId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+    OrderQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: OrderQueue
 functions:
   placeOrder:
     handler: handlers/placeOrder.placeOrder
@@ -38,3 +48,11 @@ functions:
       - httpApi:
           path: /place-order
           method: post
+  processOOrder:
+    handler: handlers/processOrder.processOrder
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - OrderQueue
+              - Arn
